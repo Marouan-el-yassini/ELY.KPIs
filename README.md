@@ -7,24 +7,133 @@
 
 ## 📑 Table of Contents
 
-1. [Introduction Métier — La Notion d'Entreprise](#1-introduction-métier--la-notion-dentreprise)
-2. [Stratégie d'Entreprise & Pilotage de la Performance](#2-stratégie-dentreprise--pilotage-de-la-performance)
-3. [Décomposition des Objectifs Stratégiques](#3-décomposition-des-objectifs-stratégiques)
-4. [Indicateurs de Performance (KPI)](#4-indicateurs-de-performance-kpi)
-5. [KPIs Utilisés dans ELY.KPI](#5-kpis-utilisés-dans-elykpi)
-6. [Plan d'Action & Comparaison des Résultats](#6-plan-daction--comparaison-des-résultats)
-7. [Architecture Système](#7-architecture-système)
-8. [Workflows n8n](#8-workflows-n8n)
-9. [Web Application](#9-web-application)
-10. [RAG Agent & Intelligence Artificielle](#10-rag-agent--intelligence-artificielle)
-11. [Technologies Used](#11-technologies-used)
-12. [Screenshots](#12-screenshots)
-13. [Setup & Deployment](#13-setup--deployment)
-14. [Author](#14-author)
+1. [Technologies Used](#technologies-used)
+2. [Screenshots](#screenshots)
+3. [Introduction Métier — La Notion d'Entreprise](#introduction-métier--la-notion-dentreprise)
+4. [Stratégie d'Entreprise & Pilotage de la Performance](#stratégie-dentreprise--pilotage-de-la-performance)
+5. [Décomposition des Objectifs Stratégiques](#décomposition-des-objectifs-stratégiques)
+6. [Indicateurs de Performance (KPI)](#indicateurs-de-performance-kpi)
+7. [KPIs Utilisés dans ELY.KPI](#kpis-utilisés-dans-elykpi)
+8. [Plan d'Action & Comparaison des Résultats](#plan-daction--comparaison-des-résultats)
+9. [Architecture Système](#architecture-système)
+10. [Workflows n8n](#workflows-n8n)
+11. [Web Application](#web-application)
+12. [RAG Agent & Intelligence Artificielle](#rag-agent--intelligence-artificielle)
+13. [Setup & Deployment](#setup--deployment)
+14. [Author](#author)
 
 ---
 
-## 1. Introduction Métier — La Notion d'Entreprise
+## Technologies Used
+
+| Catégorie            | Technologie                                        | Rôle dans ELY.KPI                                 |
+| -------------------- | -------------------------------------------------- | ------------------------------------------------- |
+| **Automation**       | n8n (self-hosted)                                  | Orchestration des 2 workflows principaux          |
+| **LLM — Calcul KPI** | OpenAI GPT-4.1-mini                                | Agent calcul OEE + interprétation RAG             |
+| **LLM — Rapport**    | OpenAI GPT-4.1-nano                                | Génération du rapport HTML                        |
+| **Embeddings**       | Google Gemini gemini-embedding-001                 | Vectorisation des requêtes KPI                    |
+| **Vector Store**     | Supabase (pgvector)                                | Base de connaissances KPI / standards industriels |
+| **Base de données**  | Supabase (PostgreSQL)                              | Stockage des sessions machine (multi-tenant)      |
+| **Auth**             | Supabase Auth                                      | Authentification utilisateurs, RLS                |
+| **Spreadsheet**      | Google Sheets                                      | Source de données pour l'analyse n8n              |
+| **Storage**          | Google Drive                                       | Stockage des rapports PDF générés                 |
+| **PDF Generation**   | HTML CSS to PDF                                    | Conversion rapport HTML → PDF                     |
+| **Frontend**         | HTML5 / CSS3 / Vanilla JS                          | Dashboard web (aucun framework)                   |
+| **Charts**           | Chart.js                                           | Graphiques OEE par machine, tendance production   |
+| **UI Icons**         | Lucide Icons                                       | Iconographie de l'interface                       |
+| **Fonts**            | Google Fonts (Orbitron, Rajdhani, Share Tech Mono) | Typographie industrielle                          |
+| **CSS Framework**    | Tailwind CSS (CDN)                                 | Utilitaires de style                              |
+| **Hosting**          | Vercel                                             | Déploiement de la webapp                          |
+
+---
+
+## Screenshots
+
+> Les captures d'écran ci-dessous illustrent les différentes vues du système ELY.KPI.
+
+---
+
+### 🔐 Auth Screen — Login
+
+![Login Screen](./KPIs%20System/img/Login.png)
+
+_Interface d'authentification avec Supabase Auth._
+
+---
+
+### 📝 Register Screen
+
+![Register Screen](./KPIs%20System/img/registre.png)
+
+_Formulaire d'enregistrement avec champs : prénom, nom, entreprise, secteur industriel, téléphone._
+
+---
+
+### 📊 Dashboard — Vue Principale
+
+![Dashboard](./KPIs%20System/img/Dashboard.png)
+
+_KPI cards avec barres de progression animées, graphiques Chart.js, tableau des sessions récentes avec badges de statut colorés._
+
+---
+
+### 📊 Dashboard — Vue Alternative
+
+![Dashboard 2](./KPIs%20System/img/Dashboard2.png)
+
+_Vue alternative du dashboard avec visualisations complètes des performances._
+
+---
+
+### 🖥️ Data Push — Saisie de Session
+
+![Data Push Terminal](./KPIs%20System/img/DATA_PUSH.png)
+
+_Formulaire de saisie à gauche avec calcul instantané. Session queue à droite montrant les machines saisies avec leurs KPIs calculés en temps réel._
+
+---
+
+### 📋 Historique — Table Complète
+
+![History Table](./KPIs%20System/img/History.png)
+
+_Table complète avec tous les KPIs calculés, badges de statut colorés, filtres de recherche et filtre OEE._
+
+---
+
+### 👤 Profile — Informations Entreprise
+
+![Profile Page](./KPIs%20System/img/Profile.png)
+
+_Page profil avec informations entreprise (nom, secteur, téléphone), statistiques globales de la société._
+
+---
+
+### 📄 Rapport PDF Généré
+
+![PDF Report](./KPIs%20System/img/THE%20PDF%20RAPPORT.png)
+
+_Rapport PDF généré automatiquement par AI Agent 2 avec KPI cards, tableau détaillé par machine, et analyses visuelles._
+
+---
+
+### 🔄 Workflow d'Ajout n8n
+
+![Add Workflow](./KPIs%20System/img/add_workflow.jpg)
+
+_Configuration d'ajout de workflow dans n8n pour l'ingestion de données._
+
+---
+
+### 🔍 Workflow d'Analyse n8n
+
+![Analysis Workflow](./KPIs%20System/img/analyse_workflow.jpg)
+
+_Workflow d'analyse complet avec calcul des KPIs et génération du rapport via AI Agent._
+
+---
+
+## Introduction Métier — La Notion d'Entreprise
 
 Une **entreprise** est une organisation qui combine des ressources humaines, financières, matérielles et informationnelles pour produire des biens ou des services destinés à un marché. Dans u[...]
 
@@ -37,7 +146,7 @@ Dans l'industrie manufacturière marocaine, cette dualité est particulièrement
 
 ---
 
-## 2. Stratégie d'Entreprise & Pilotage de la Performance
+## Stratégie d'Entreprise & Pilotage de la Performance
 
 ### 2.1 Définition
 
@@ -87,7 +196,7 @@ Définir le Plan d'Action Correctif
 
 ---
 
-## 3. Décomposition des Objectifs Stratégiques
+## Décomposition des Objectifs Stratégiques
 
 Le système ELY.KPI s'appuie sur une cascade d'objectifs structurée en trois niveaux :
 
@@ -124,7 +233,7 @@ Les objectifs opérationnels doivent être **SMART** :
 
 ---
 
-## 4. Indicateurs de Performance (KPI)
+## Indicateurs de Performance (KPI)
 
 ### 4.1 Définition
 
@@ -174,7 +283,7 @@ Quand un KPI est en dessous de sa cible, le système déclenche un cycle d'amél
 
 ---
 
-## 5. KPIs Utilisés dans ELY.KPI
+## KPIs Utilisés dans ELY.KPI
 
 Le système est construit autour du modèle **OEE (Overall Equipment Effectiveness)** — standard mondial Lean Manufacturing / TPM.
 
@@ -261,7 +370,7 @@ Qualité = (Production_réelle - Quantité_défectueuse) / Production_réelle ×
 
 ---
 
-## 6. Plan d'Action & Comparaison des Résultats
+## Plan d'Action & Comparaison des Résultats
 
 ### 6.1 Grille de comparaison KPI vs Objectif
 
@@ -288,7 +397,7 @@ Cette interprétation contextuelle va au-delà du simple seuil — elle tient co
 
 ---
 
-## 7. Architecture Système
+## Architecture Système
 
 ```
 ┌────────────────────────────────────────────────────────────────[...]
@@ -340,7 +449,7 @@ Cette interprétation contextuelle va au-delà du simple seuil — elle tient co
 
 ---
 
-## 8. Workflows n8n
+## Workflows n8n
 
 ### Workflow 1 — Data Ingestion
 
@@ -407,7 +516,7 @@ Loop Over Items (batch = 1, machine par machine)
 
 ---
 
-## 9. Web Application
+## Web Application
 
 La webapp **ELY.KPI Dashboard** est une interface industrielle temps réel construite en JS .
 
@@ -439,7 +548,7 @@ index.html
 │       │   ├── Form (7 champs machine)
 │       │   └── Session Queue (cartes live)
 │       ├── Page: Historique
-│       ��   ├── Stats row (total, machines, OEE moyen)
+│       │   ├── Stats row (total, machines, OEE moyen)
 │       │   └── Table complète avec filtres
 │       └── Page: Profil
 │           ├── Edit form
@@ -459,7 +568,7 @@ Quand l'opérateur soumet un formulaire :
 
 ---
 
-## 10. RAG Agent & Intelligence Artificielle
+## RAG Agent & Intelligence Artificielle
 
 ### 10.1 Qu'est-ce qu'un RAG Agent ?
 
@@ -494,116 +603,7 @@ Pour chaque KPI calculé (OEE, Disponibilité, Performance, Qualité), l'agent :
 
 ---
 
-## 11. Technologies Used
-
-| Catégorie            | Technologie                                        | Rôle dans ELY.KPI                                 |
-| -------------------- | -------------------------------------------------- | ------------------------------------------------- |
-| **Automation**       | n8n (self-hosted)                                  | Orchestration des 2 workflows principaux          |
-| **LLM — Calcul KPI** | OpenAI GPT-4.1-mini                                | Agent calcul OEE + interprétation RAG             |
-| **LLM — Rapport**    | OpenAI GPT-4.1-nano                                | Génération du rapport HTML                        |
-| **Embeddings**       | Google Gemini gemini-embedding-001                 | Vectorisation des requêtes KPI                    |
-| **Vector Store**     | Supabase (pgvector)                                | Base de connaissances KPI / standards industriels |
-| **Base de données**  | Supabase (PostgreSQL)                              | Stockage des sessions machine (multi-tenant)      |
-| **Auth**             | Supabase Auth                                      | Authentification utilisateurs, RLS                |
-| **Spreadsheet**      | Google Sheets                                      | Source de données pour l'analyse n8n              |
-| **Storage**          | Google Drive                                       | Stockage des rapports PDF générés                 |
-| **PDF Generation**   | HTML CSS to PDF                                    | Conversion rapport HTML → PDF                     |
-| **Frontend**         | HTML5 / CSS3 / Vanilla JS                          | Dashboard web (aucun framework)                   |
-| **Charts**           | Chart.js                                           | Graphiques OEE par machine, tendance production   |
-| **UI Icons**         | Lucide Icons                                       | Iconographie de l'interface                       |
-| **Fonts**            | Google Fonts (Orbitron, Rajdhani, Share Tech Mono) | Typographie industrielle                          |
-| **CSS Framework**    | Tailwind CSS (CDN)                                 | Utilitaires de style                              |
-| **Hosting**          | Vercel                                             | Déploiement de la webapp                          |
-
----
-
-## 12. Screenshots
-
-> Les captures d'écran ci-dessous illustrent les différentes vues du système ELY.KPI.
-
----
-
-### 🔐 Auth Screen — Login
-
-![Login Screen](./KPIs%20System/img/Login.png)
-
-_Interface d'authentification avec Supabase Auth._
-
----
-
-### 📝 Register Screen
-
-![Register Screen](./KPIs%20System/img/registre.png)
-
-_Formulaire d'enregistrement avec champs : prénom, nom, entreprise, secteur industriel, téléphone._
-
----
-
-### 📊 Dashboard — Vue Principale
-
-![Dashboard](./KPIs%20System/img/Dashboard.png)
-
-_KPI cards avec barres de progression animées, graphiques Chart.js, tableau des sessions récentes avec badges de statut colorés._
-
----
-
-### 📊 Dashboard — Vue Alternative
-
-![Dashboard 2](./KPIs%20System/img/Dashboard2.png)
-
-_Vue alternative du dashboard avec visualisations complètes des performances._
-
----
-
-### 🖥️ Data Push — Saisie de Session
-
-![Data Push Terminal](./KPIs%20System/img/DATA_PUSH.png)
-
-_Formulaire de saisie à gauche avec calcul instantané. Session queue à droite montrant les machines saisies avec leurs KPIs calculés en temps réel._
-
----
-
-### 📋 Historique — Table Complète
-
-![History Table](./KPIs%20System/img/History.png)
-
-_Table complète avec tous les KPIs calculés, badges de statut colorés, filtres de recherche et filtre OEE._
-
----
-
-### 👤 Profile — Informations Entreprise
-
-![Profile Page](./KPIs%20System/img/Profile.png)
-
-_Page profil avec informations entreprise (nom, secteur, téléphone), statistiques globales de la société._
-
----
-
-### 📄 Rapport PDF Généré
-
-![PDF Report](./KPIs%20System/img/THE%20PDF%20RAPPORT.png)
-
-_Rapport PDF généré automatiquement par AI Agent 2 avec KPI cards, tableau détaillé par machine, et analyses visuelles._
-
----
-
-### 🔄 Workflow d'Ajout n8n
-
-![Add Workflow](./KPIs%20System/img/add_workflow.jpg)
-
-_Configuration d'ajout de workflow dans n8n pour l'ingestion de données._
-
----
-
-### 🔍 Workflow d'Analyse n8n
-
-![Analysis Workflow](./KPIs%20System/img/analyse_workflow.jpg)
-
-_Workflow d'analyse complet avec calcul des KPIs et génération du rapport via AI Agent._
-
----
-
-## 13. Setup & Deployment
+## Setup & Deployment
 
 ### Prérequis
 
@@ -646,7 +646,7 @@ _Workflow d'analyse complet avec calcul des KPIs et génération du rapport via 
 
 ---
 
-## 14. Author
+## Author
 
 **ELY.Automation**
 💼 [LinkedIn](https://linkedin.com/in/marouan-el-yassini)  
