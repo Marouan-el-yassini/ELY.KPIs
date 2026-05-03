@@ -1,0 +1,129 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "YOUR_WEBHOOK_PATH_UUID",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "id": "98e82a18-a2a1-48ac-bd55-b62f0e8e2cdb",
+      "name": "Webhook",
+      "webhookId": "YOUR_WEBHOOK_PATH_UUID"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_KPI_DATA_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "KPI_Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_KPI_DATA_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET2_GID",
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_KPI_DATA_SHEET_ID/edit#gid=YOUR_SHEET2_GID"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Machine": "={{ $json.body.Machine }}",
+            "Date": "={{ $json.body.Date }}",
+            "Temps_planifie_min": "={{ $json.body.Temps_planifie_min }}",
+            "Temps_arret_min": "={{ $json.body.Temps_arret_min }}",
+            "Production_theorique": "={{ $json.body.Production_theorique }}",
+            "Production_reelle": "={{ $json.body.Production_reelle }}",
+            "Quantite_defectueuse": "={{ $json.body.Quantite_defectueuse }}"
+          },
+          "matchingColumns": ["Machine"],
+          "schema": [
+            { "id": "Date", "displayName": "Date", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Machine", "displayName": "Machine", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "Temps_planifie_min", "displayName": "Temps_planifie_min", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Temps_arret_min", "displayName": "Temps_arret_min", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Production_theorique", "displayName": "Production_theorique", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Production_reelle", "displayName": "Production_reelle", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Quantite_defectueuse", "displayName": "Quantite_defectueuse", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [192, -176],
+      "id": "18d12d93-102e-448a-841c-541dc60badeb",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLE_SHEETS_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Element Added Succefully ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [544, -144],
+      "id": "3a6f0352-e7a0-445b-9d29-1bbdd9f82ce9",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "tableId": "machine_sessions",
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldId": "machine", "fieldValue": "={{ $json.Machine }}" },
+            { "fieldId": "date", "fieldValue": "={{ $json.Date }}" },
+            { "fieldId": "temps_planifie_min", "fieldValue": "={{ $json.Temps_planifie_min }}" },
+            { "fieldId": "temps_arret_min", "fieldValue": "={{ $json.Temps_arret_min }}" },
+            { "fieldId": "production_theorique", "fieldValue": "={{ $json.Production_theorique }}" },
+            { "fieldId": "production_reelle", "fieldValue": "={{ $json.Production_reelle }}" },
+            { "fieldId": "quantite_defectueuse", "fieldValue": "={{ $json.Quantite_defectueuse }}" },
+            { "fieldId": "company_id", "fieldValue": "={{ $('Webhook').item.json.body.company_id }}" }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [368, 48],
+      "id": "aad15d0a-2bfb-4573-9ac1-e7b1bca31008",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "YOUR_SUPABASE_CREDENTIAL_ID",
+          "name": "YOUR_SUPABASE_CREDENTIAL_NAME"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Append or update row in sheet", "type": "main", "index": 0 }]]
+    },
+    "Append or update row in sheet": {
+      "main": [[{ "node": "Create a row", "type": "main", "index": 0 }]]
+    },
+    "Create a row": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  }
+}

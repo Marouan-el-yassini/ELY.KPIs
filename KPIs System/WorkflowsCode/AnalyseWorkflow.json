@@ -1,0 +1,442 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Date: {{ $json.Date }}\nMachine:{{ $json.Machine }}\nTemps_planifier_min:{{ $json.Temps_planifie_min }}\nTemps_arret_min:{{ $json.Temps_arret_min }}\nProduction_theorique:{{ $json.Production_theorique }}\nProduction_Reel:{{ $json.Production_reelle }}\nQuantité_defacteuse:{{ $json.Quantite_defectueuse }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# SYSTEM PROMPT — Agent KPI Industriel OEE\n\n## IDENTITÉ & RÔLE\n\nTu es un agent intelligent spécialisé en analyse de performance industrielle (OEE).\nTu travailles sur des données de production manufacturière et tu es expert en calcul\net interprétation des KPI selon les standards Lean Manufacturing et TPM.\n\nTu dois :\n1. Calculer les KPI industriels (OEE, Disponibilité, Performance, Qualité)\n2. Interpréter chaque KPI via l'outil KPI_VectorBase (OBLIGATOIRE)\n3. Retourner uniquement un JSON valide structuré\n\n---\n\n## DONNÉES D'ENTRÉE\n\nLes données proviennent du sheet KPI_Data :\n\n- Date\n- Machine\n- Temps_planifie_min\n- Temps_arret_min\n- Production_theorique\n- Production_reelle\n- Quantite_defectueuse\n\n---\n\n## FORMULES KPI (STRICTES)\n\n### 1. Disponibilité\nTemps_ouverture = Temps_planifie_min - Temps_arret_min  \nDisponibilite = (Temps_ouverture / Temps_planifie_min) × 100\n\n### 2. Performance\nPerformance = (Production_reelle / Production_theorique) × 100\n\n### 3. Qualité\nProduction_conforme = Production_reelle - Quantite_defectueuse  \nTaux_Qualite = (Production_conforme / Production_reelle) × 100  \nSi Production_reelle = 0 → Taux_Qualite = 0\n\n### 4. OEE\nOEE = (Disponibilite / 100) × (Performance / 100) × (Taux_Qualite / 100) × 100\n\n---\n\n## OUTIL OBLIGATOIRE — KPI_VectorBase\n\nPour CHAQUE KPI calculé, tu DOIS appeler KPI_VectorBase :\n\n- OEE\n- Disponibilite\n- Performance\n- Taux_Qualite\n\nChaque appel doit inclure :\n- Nom du KPI\n- Valeur calculée\n- Machine\n- Contexte des autres KPI\n\nRetour attendu de KPI_VectorBase :\n- Result\n- Facteur_Influ\n- Facteur_Result\n\n⚠️ Si tu n'appelles pas KPI_VectorBase pour chaque KPI → réponse invalide\n\n---\n\n## RÈGLES DE CALCUL\n\n- Arrondir tous les KPI à 2 décimales\n- Ne jamais dépasser 100%\n- Ne jamais produire de valeurs négatives\n- Ne jamais inventer de données\n- Utiliser uniquement les données d'entrée\n\n---\n\n## GESTION D'ERREURS\n\n- Temps_planifie_min = 0 → retourner OEE = 0 et continuer\n- Production_reelle = 0 → Performance = 0, Qualité = 0\n- Quantite_defectueuse > Production_reelle → incohérence (marquer CRITIQUE)\n- Valeur manquante → retourner 0 et \"CRITIQUE\"\n\n---\n\n## FORMAT DE SORTIE OBLIGATOIRE (STRICT)\n\nTu dois retourner UNIQUEMENT ce JSON :\n\n{\n  \"Date\": \"string\",\n  \"Machine\": \"string\",\n  \"OEE\": number,\n  \"OEE_Result\": \"string\",\n  \"Disponibilite\": number,\n  \"Disponibilite_Result\": \"string\",\n  \"Performance\": number,\n  \"Performance_Result\": \"string\",\n  \"Taux_Qualite\": number,\n  \"Taux_Qualite_Result\": \"string\"\n}\n\n---\n\n## RÈGLES DE SORTIE\n\n- Retourner UNIQUEMENT du JSON valide\n- Aucun texte avant ou après\n- Aucun markdown\n- Tous les champs sont obligatoires\n- Types stricts :\n  - numbers = numériques uniquement\n  - strings = texte uniquement\n\n---\n\n## CONTRAINTES ABSOLUES\n\n- NE JAMAIS ajouter de champs supplémentaires\n- NE JAMAIS modifier Date ou Machine\n- NE JAMAIS retourner null ou undefined\n- NE JAMAIS retourner du texte hors JSON\n- NE JAMAIS ignorer KPI_VectorBase\n\n---\n\n## MODE STRICT FINAL\n\nSi une erreur survient :\n- KPI numériques → 0\n- KPI_Result → \"CRITIQUE\"\n\nFIN."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [848, 128],
+      "id": "9f842d82-b099-4be6-a367-6f0ff20e74b2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [896, 560],
+      "id": "5af56420-8cbd-4737-bf0f-558bdfc7f096",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_GEMINI_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLE_GEMINI_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_KPI_DATA_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "KPI_Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_KPI_DATA_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET2_GID",
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_KPI_DATA_SHEET_ID/edit#gid=YOUR_SHEET2_GID"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [208, 0],
+      "id": "8e3f1ac8-e67d-405e-bebc-c9d08120854d",
+      "name": "KPI_DATA",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLE_SHEETS_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "KPI_VectorBase",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [944, 352],
+      "id": "1bb73c1a-fd6d-413a-b099-670be007e426",
+      "name": "KPI_VectorBase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "YOUR_SUPABASE_CREDENTIAL_ID",
+          "name": "YOUR_SUPABASE_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": "=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [624, 0],
+      "id": "2ed6875d-18b7-4f76-aefa-5f3d025e73c9",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.Machine + \"_\" + $json.Date }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [800, 432],
+      "id": "fea40cdd-27c6-48ae-a1a8-68d03a0c6685",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Date: {{ $json.Date }}\nMachine:{{ $json.Machine }}\nOEE:{{ $json.OEE }}\nOEE Result:{{ $json.OEE_Result }}\nTaux_Qualite:{{ $json.Taux_Qualite }}\nTaux_Qualite_Result:{{ $json.T_Qualit_Result }}\nDisponibilte:{{ $json.Disponibilete }}\nDisponibilte_Result:{{ $json.Dispo_Result }}\nPerforemance:{{ $json.Perforemence }}\nPerforemance_Result:{{ $json.Perform_Result }}",
+        "options": {
+          "systemMessage": "=# SYSTEM PROMPT — Agent Générateur de Rapport HTML KPI\n\n## Rôle\nTu es un expert en visualisation de données industrielles. Tu reçois une liste \nde résultats KPI pour plusieurs machines et tu génères un rapport HTML complet, \nprofessionnel et visuellement riche, prêt à être converti en PDF.\n\n## Données d'entrée\nTu reçois un tableau JSON contenant toutes les lignes agrégées avec ces champs :\n- Date\n- Machine\n- OEE (valeur numérique en pourcentage)\n- OEE_Result (état : CRITIQUE / MOYEN / BON / EXCELLENT)\n- Taux_Qualite (valeur numérique)\n- T_Qualit_Result (état)\n- Disponibilete (valeur numérique)\n- Dispo_Result (état)\n- Perforemence (valeur numérique)\n- Perform_Result (état)\n\n## Instructions de génération HTML\n\nTu dois retourner UNIQUEMENT le code HTML complet, sans explication, \nsans balise markdown, sans bloc ```html. Juste le code brut commençant par <!DOCTYPE html>.\n\n### Structure du rapport à générer :\n\n**1. Header du rapport**\n- Titre : \"Rapport de Performance Industrielle — KPI OEE\"\n- Sous-titre : date du rapport (prendre la date la plus récente des données)\n- Logo textuel stylisé : \"⚙️ ELY.Automation\"\n- Badge : \"Généré automatiquement par Agent KPI\"\n\n**2. Bloc résumé global (KPI Cards)**\nCalculer et afficher 4 cartes de synthèse :\n- OEE Moyen global de toutes les machines (moyenne des valeurs OEE)\n- Disponibilité Moyenne globale\n- Performance Moyenne globale  \n- Qualité Moyenne globale\nChaque carte affiche : icône + label + valeur moyenne + badge état dominant\n\n**3. Tableau détaillé par machine**\nUn tableau HTML avec toutes les lignes reçues, colonnes :\nDate | Machine | OEE % | État OEE | Disponibilité % | État | Performance % | État | Qualité % | État\n\nChaque cellule \"État\" doit avoir une couleur de fond selon la valeur :\n- CRITIQUE → fond rouge clair #fff5f5, texte rouge #c53030, icône ❌\n- MOYEN ou A SURVEILLER → fond orange clair #fffbeb, texte orange #c05621, icône ⚠️\n- BON → fond bleu clair #ebf8ff, texte bleu #2c5282, icône ✅\n- EXCELLENT ou TRES PERFORMANT → fond vert clair #f0fff4, texte vert #276749, icône 🏆\n\n**4. Section analyse par machine**\nPour chaque machine unique, générer un bloc carte avec :\n- Nom de la machine en titre avec icône 🏭\n- 4 jauges visuelles (barres de progression HTML/CSS) pour OEE, Dispo, Perf, Qualité\n- Badge état global de la machine (état le plus fréquent ou le plus bas)\n\n**5. Footer**\n- Texte : \"Rapport généré par ELY.Automation — Agent KPI Industriel\"\n- Date et heure de génération\n\n## Règles de style CSS à intégrer dans le HTML\n\n- Police : 'Segoe UI', sans-serif\n- Couleur principale : #1a2e4a (bleu marine industriel)\n- Fond page : #f7fafc\n- Fond cartes : #ffffff avec box-shadow légère\n- Tableaux : header #1a2e4a fond blanc alternance de lignes\n- Bordures arrondies : border-radius 8px sur les cartes\n- Tout le CSS doit être inline dans une balise <style> dans le <head>\n- Le rapport doit être optimisé pour impression A4 (max-width 1100px, margin auto)\n- Ajouter @media print pour masquer les ombres et optimiser l'impression PDF\n\n## Format de retour OBLIGATOIRE\n\nRetourner UNIQUEMENT le code HTML complet.\nNe jamais ajouter de texte avant ou après le HTML.\nNe jamais utiliser de blocs markdown.\nLe code doit commencer exactement par : <!DOCTYPE html>\nEt se terminer exactement par : </html>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [1392, -128],
+      "id": "bf59e8f2-9859-4eff-9b56-33c988ba8e4e",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_KPI_RESULT_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "KPI_Result",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_KPI_RESULT_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_KPI_RESULT_SHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [944, -128],
+      "id": "6f415919-8e0a-4cd3-84c4-d27d74208324",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLE_SHEETS_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.Machine }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [1504, 112],
+      "id": "c7037041-278c-481c-913e-0ebdfb0ec607",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            { "fieldToAggregate": "Machine" },
+            { "fieldToAggregate": "Date" },
+            { "fieldToAggregate": "OEE" },
+            { "fieldToAggregate": "OEE_Result" },
+            { "fieldToAggregate": "Taux_Qualite" },
+            { "fieldToAggregate": "T_Qualit_Result" },
+            { "fieldToAggregate": "Disponibilete" },
+            { "fieldToAggregate": "Dispo_Result" },
+            { "fieldToAggregate": "Perforemence" },
+            { "fieldToAggregate": "Perform_Result" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1152, -128],
+      "id": "33bd214c-1e90-4714-8166-3fbe084be5f5",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "html_content": "={{ $json.output }}",
+        "output_format": "file"
+      },
+      "type": "n8n-nodes-htmlcsstopdf.htmlcsstopdf",
+      "typeVersion": 1,
+      "position": [1712, -128],
+      "id": "4fe5655f-0944-47b1-8583-bff72bf82573",
+      "name": "Convert HTML to PDF",
+      "credentials": {
+        "htmlcsstopdfApi": {
+          "id": "YOUR_HTML_TO_PDF_CREDENTIAL_ID",
+          "name": "YOUR_HTML_TO_PDF_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "YOUR_WEBHOOK_PATH_UUID",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-32, -32],
+      "id": "55a760dc-b844-4f8d-bcb4-dfa7d5b67840",
+      "name": "Webhook",
+      "webhookId": "YOUR_WEBHOOK_PATH_UUID"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "the anlyse is finished ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [2128, -128],
+      "id": "6456cfcd-1cb4-42b2-96cb-3bb1bc1f2444",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [672, 304],
+      "id": "1a53c046-bd6e-4aa3-b67b-f45edea7db48",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "YOUR_OPENAI_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [1264, 32],
+      "id": "8ca81f42-8dda-4035-9cad-7db6c1457126",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "YOUR_OPENAI_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"Date\": { \"type\": \"string\" },\n    \"Machine\": { \"type\": \"string\" },\n    \"OEE\": { \"type\": \"number\" },\n    \"OEE_Result\": { \"type\": \"string\" },\n    \"Disponibilite\": { \"type\": \"number\" },\n    \"Disponibilite_Result\": { \"type\": \"string\" },\n    \"Performance\": { \"type\": \"number\" },\n    \"Performance_Result\": { \"type\": \"string\" },\n    \"Taux_Qualite\": { \"type\": \"number\" },\n    \"Taux_Qualite_Result\": { \"type\": \"string\" }\n  },\n  \"required\": [\n    \"Date\",\n    \"Machine\",\n    \"OEE\",\n    \"OEE_Result\",\n    \"Disponibilite\",\n    \"Disponibilite_Result\",\n    \"Performance\",\n    \"Performance_Result\",\n    \"Taux_Qualite\",\n    \"Taux_Qualite_Result\"\n  ],\n  \"additionalProperties\": false\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [1248, 464],
+      "id": "d40fed0f-f463-44b1-bf72-5a5f10151d10",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_KPI_RESULT_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "KPI_Result",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_KPI_RESULT_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_KPI_RESULT_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "OEE": "={{ $json.output.OEE }}",
+            "OEE_Result": "={{ $json.output.OEE_Result }}",
+            "Disponibilete": "={{ $json.output.Disponibilite }}",
+            "Dispo_Result": "={{ $json.output.Disponibilite_Result }}",
+            "Taux_Qualite": "={{ $json.output.Taux_Qualite }}",
+            "T_Qualit_Result": "={{ $json.output.Taux_Qualite_Result }}",
+            "Perforemence": "={{ $json.output.Performance }}",
+            "Perform_Result": "={{ $json.output.Performance_Result }}",
+            "Date": "={{ $json.output.Date }}",
+            "Machine": "={{ $json.output.Machine }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            { "id": "Date", "displayName": "Date", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Machine", "displayName": "Machine", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "OEE", "displayName": "OEE", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "OEE_Result", "displayName": "OEE_Result", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Taux_Qualite", "displayName": "Taux_Qualite", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "T_Qualit_Result", "displayName": "T_Qualit_Result", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Disponibilete", "displayName": "Disponibilete", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Dispo_Result", "displayName": "Dispo_Result", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Perforemence", "displayName": "Perforemence", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true },
+            { "id": "Perform_Result", "displayName": "Perform_Result", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [1248, 176],
+      "id": "78e5f340-bc6c-47fe-bd9c-600d933aec0d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLE_SHEETS_CREDENTIAL_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_DRIVE_FOLDER_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_FOLDER_NAME",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/YOUR_GOOGLE_DRIVE_FOLDER_ID"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [1920, -128],
+      "id": "9f32f22d-fe0d-4d3f-ae2d-23bd46e46ce6",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YOUR_GOOGLE_DRIVE_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLE_DRIVE_CREDENTIAL_NAME"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "AI Agent": {
+      "main": [[{ "node": "Append row in sheet", "type": "main", "index": 0 }]]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [[{ "node": "KPI_VectorBase", "type": "ai_embedding", "index": 0 }]]
+    },
+    "KPI_DATA": {
+      "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]]
+    },
+    "KPI_VectorBase": {
+      "ai_tool": [[{ "node": "AI Agent", "type": "ai_tool", "index": 0 }]]
+    },
+    "Loop Over Items": {
+      "main": [
+        [{ "node": "Get row(s) in sheet", "type": "main", "index": 0 }],
+        [{ "node": "AI Agent", "type": "main", "index": 0 }]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [[{ "node": "AI Agent", "type": "ai_memory", "index": 0 }]]
+    },
+    "AI Agent1": {
+      "main": [[{ "node": "Convert HTML to PDF", "type": "main", "index": 0 }]]
+    },
+    "Get row(s) in sheet": {
+      "main": [[{ "node": "Aggregate", "type": "main", "index": 0 }]]
+    },
+    "Simple Memory1": {
+      "ai_memory": [[{ "node": "AI Agent1", "type": "ai_memory", "index": 0 }]]
+    },
+    "Aggregate": {
+      "main": [[{ "node": "AI Agent1", "type": "main", "index": 0 }]]
+    },
+    "Convert HTML to PDF": {
+      "main": [[{ "node": "Upload file", "type": "main", "index": 0 }]]
+    },
+    "Webhook": {
+      "main": [[{ "node": "KPI_DATA", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [[{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [[{ "node": "AI Agent1", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [[{ "node": "AI Agent", "type": "ai_outputParser", "index": 0 }]]
+    },
+    "Append row in sheet": {
+      "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]]
+    },
+    "Upload file": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  }
+}
