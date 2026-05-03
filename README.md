@@ -26,14 +26,14 @@
 
 ## 1. Introduction Métier — La Notion d'Entreprise
 
-Une **entreprise** est une organisation qui combine des ressources humaines, financières, matérielles et informationnelles pour produire des biens ou des services destinés à un marché. Dans un contexte industriel manufacturier, l'entreprise doit en permanence s'assurer qu'elle est à la fois :
+Une **entreprise** est une organisation qui combine des ressources humaines, financières, matérielles et informationnelles pour produire des biens ou des services destinés à un marché. Dans u[...]
 
 - **Efficace** _(effective)_ — elle atteint ses objectifs fixés : les machines produisent les quantités prévues, les délais sont respectés, la qualité est au rendez-vous.
 - **Efficiente** _(efficient)_ — elle atteint ces objectifs en utilisant le minimum de ressources : temps machine, matières premières, énergie, main-d'œuvre.
 
-> 📌 Une entreprise peut être efficace sans être efficiente (atteindre ses objectifs en gaspillant des ressources), ou efficiente sans être efficace (optimiser ses ressources mais rater ses cibles). L'idéal est d'être les deux simultanément.
+> 📌 Une entreprise peut être efficace sans être efficiente (atteindre ses objectifs en gaspillant des ressources), ou efficiente sans être efficace (optimiser ses ressources mais rater ses c[...]
 
-Dans l'industrie manufacturière marocaine, cette dualité est particulièrement critique : la compétitivité face aux marchés internationaux exige une production **sans gaspillage**, **sans défauts**, et **sans temps morts**. C'est précisément l'objectif du système ELY.KPI.
+Dans l'industrie manufacturière marocaine, cette dualité est particulièrement critique : la compétitivité face aux marchés internationaux exige une production **sans gaspillage**, **sans dé[...]
 
 ---
 
@@ -41,7 +41,7 @@ Dans l'industrie manufacturière marocaine, cette dualité est particulièrement
 
 ### 2.1 Définition
 
-La **stratégie d'entreprise** est l'ensemble des décisions et orientations à long terme qui permettent à l'organisation d'atteindre un avantage concurrentiel durable. Elle répond à la question : _"Où voulons-nous aller, et comment ?"_
+La **stratégie d'entreprise** est l'ensemble des décisions et orientations à long terme qui permettent à l'organisation d'atteindre un avantage concurrentiel durable. Elle répond à la questi[...]
 
 Le **pilotage de la performance** est le processus continu qui consiste à :
 
@@ -291,9 +291,9 @@ Cette interprétation contextuelle va au-delà du simple seuil — elle tient co
 ## 7. Architecture Système
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
+┌────────────────────────────────────────────────────────────────[...]
 │                        ELY.KPI SYSTEM                          │
-├─────────────────────────────────────────────────────────────────┤
+├────────────────────────────────────────────────────────────────[...]
 │                                                                 │
 │  COUCHE COLLECTE                                                │
 │  ┌─────────────────┐    ┌──────────────────┐                   │
@@ -335,7 +335,7 @@ Cette interprétation contextuelle va au-delà du simple seuil — elle tient co
 │  │  Historique · Profil · Charts            │                  │
 │  └──────────────────────────────────────────┘                  │
 │                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────[...]
 ```
 
 ---
@@ -439,7 +439,7 @@ index.html
 │       │   ├── Form (7 champs machine)
 │       │   └── Session Queue (cartes live)
 │       ├── Page: Historique
-│       │   ├── Stats row (total, machines, OEE moyen)
+│       ��   ├── Stats row (total, machines, OEE moyen)
 │       │   └── Table complète avec filtres
 │       └── Page: Profil
 │           ├── Edit form
@@ -481,7 +481,7 @@ Pour chaque KPI calculé (OEE, Disponibilité, Performance, Qualité), l'agent :
 3. Reçoit les documents les plus pertinents (similarity search)
 4. **Génère l'interprétation** en combinant les données et les documents récupérés
 
-**Résultat :** L'agent ne dit pas juste "OEE = 58.3% → MOYEN". Il explique _pourquoi_ c'est moyen dans ce contexte, quels facteurs l'influencent, et quelles actions correctives sont recommandées selon les standards industriels.
+**Résultat :** L'agent ne dit pas juste "OEE = 58.3% → MOYEN". Il explique _pourquoi_ c'est moyen dans ce contexte, quels facteurs l'influencent, et quelles actions correctives sont recommand[...]
 
 ### 10.3 Avantage par rapport à un système de seuils statiques
 
@@ -523,75 +523,41 @@ Pour chaque KPI calculé (OEE, Disponibilité, Performance, Qualité), l'agent :
 
 ---
 
-### 🔐 Auth Screen — Login / Register
+### 🔐 Auth Screen — Login
 
-```
-┌────────────────────────────────────────┐
-│          ⚙️ ELY.AUTOMATION             │
-│       Industrial KPI Platform v2.0    │
-│                                        │
-│   [ LOGIN ]  [ REGISTER ]              │
-│                                        │
-│   Email    [____________________]      │
-│   Password [____________________]      │
-│                                        │
-│         [ ACCESS_SYSTEM ]              │
-└────────────────────────────────────────┘
-```
+![Login Screen](./KPIs%20System/img/Login.png)
 
-_Interface d'authentification avec Supabase Auth. Formulaire de register avec champs : prénom, nom, entreprise, secteur industriel, téléphone._
+_Interface d'authentification avec Supabase Auth._
+
+---
+
+### 📝 Register Screen
+
+![Register Screen](./KPIs%20System/img/registre.png)
+
+_Formulaire d'enregistrement avec champs : prénom, nom, entreprise, secteur industriel, téléphone._
 
 ---
 
 ### 📊 Dashboard — Vue Principale
 
-```
-┌──────────────────────────────────────────────────────────┐
-│  PRODUCTION DASHBOARD                                    │
-│  ELY.Automation SARL · 25 sessions · OEE moyen: 67.4%   │
-├──────────────────────────────────────────────────────────┤
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │
-│  │ OEE      │ │ Dispo    │ │ Perf     │ │ Qualité  │   │
-│  │ 67.4%    │ │ 84.2%    │ │ 78.5%    │ │ 93.1%    │   │
-│  │ ▓▓▓▓▓▓░░ │ │ ▓▓▓▓▓▓▓░ │ │ ▓▓▓▓▓▓░░ │ │ ▓▓▓▓▓▓▓▓ │   │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘   │
-├──────────────────────────────────────────────────────────┤
-│  [OEE par Machine - Bar Chart] [Tendance - Line Chart]   │
-├──────────────────────────────────────────────────────────┤
-│  Sessions Récentes                                       │
-│  Machine    Date        OEE    Status                    │
-│  PRESSE-A1  2025-01-15  72.3%  ✅ BON                    │
-│  CNC-02     2025-01-15  48.1%  ❌ CRITIQUE               │
-│  ROBOT-B3   2025-01-14  81.5%  ✅ BON                    │
-└──────────────────────────────────────────────────────────┘
-```
+![Dashboard](./KPIs%20System/img/Dashboard.png)
 
-_KPI cards avec barres de progression animées, deux graphiques Chart.js, tableau des sessions récentes avec badges de statut colorés._
+_KPI cards avec barres de progression animées, graphiques Chart.js, tableau des sessions récentes avec badges de statut colorés._
+
+---
+
+### 📊 Dashboard — Vue Alternative
+
+![Dashboard 2](./KPIs%20System/img/Dashboard2.png)
+
+_Vue alternative du dashboard avec visualisations complètes des performances._
 
 ---
 
 ### 🖥️ Data Push — Saisie de Session
 
-```
-┌──────────────────────────────────────────────────────────┐
-│  DATA_PUSH_TERMINAL              SESSION_QUEUE: 3 items  │
-├─────────────────────┬────────────────────────────────────┤
-│ Identification      │  ┌─────────────────────────────┐  │
-│ [PRESSE-A1_______]  │  │ PRESSE-A1          ✅ BON    │  │
-│ Date                │  │ OEE: 72.3%  Dispo: 84.2%   │  │
-│ [2025-01-15______]  │  │ Perf: 78.5% Qual: 93.1%    │  │
-│ Temps Planifié      │  │ 2025-01-15                  │  │
-│ [480_____________]  │  └─────────────────────────────┘  │
-│ Temps Arrêt         │  ┌─────────────────────────────┐  │
-│ [60______________]  │  │ CNC-02             ❌ CRIT.  │  │
-│ Prod. Théo / Réelle │  │ OEE: 48.1%  Dispo: 75.0%   │  │
-│ [1000] [820______]  │  └─────────────────────────────┘  │
-│ Défauts             │                                    │
-│ [15______________]  │                                    │
-│                     │                                    │
-│ [SYNC_TO_G_SHEETS]  │                                    │
-└─────────────────────┴────────────────────────────────────┘
-```
+![Data Push Terminal](./KPIs%20System/img/DATA_PUSH.png)
 
 _Formulaire de saisie à gauche avec calcul instantané. Session queue à droite montrant les machines saisies avec leurs KPIs calculés en temps réel._
 
@@ -599,76 +565,41 @@ _Formulaire de saisie à gauche avec calcul instantané. Session queue à droite
 
 ### 📋 Historique — Table Complète
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│  MACHINE HISTORY                                               │
-│  Toutes les sessions de votre entreprise                       │
-├────────────────────────────────────────────────────────────────┤
-│  [Rechercher machine...]  [Tout afficher ▼]  [REFRESH]        │
-├─────────────────┬─────────────────┬─────────────────┐         │
-│ 25 Sessions     │ 5 Machines       │ OEE Moyen 67.4% │         │
-├─────────────────┴─────────────────┴─────────────────┘         │
-│  #  Machine    Date        OEE    Dispo  Perf   Qual  Status   │
-│  1  PRESSE-A1  2025-01-15  72.3%  84.2%  78.5%  93.1%  ✅     │
-│  2  CNC-02     2025-01-15  48.1%  75.0%  66.7%  91.4%  ❌     │
-│  3  ROBOT-B3   2025-01-14  81.5%  90.6%  87.5%  97.2%  🏆     │
-│  ...                                                           │
-└────────────────────────────────────────────────────────────────┘
-```
+![History Table](./KPIs%20System/img/History.png)
 
 _Table complète avec tous les KPIs calculés, badges de statut colorés, filtres de recherche et filtre OEE._
 
 ---
 
-### 🤖 AI Loader — Génération Rapport
+### 👤 Profile — Informations Entreprise
 
-```
-┌────────────────────────────────────────┐
-│                                        │
-│              ◌ (spinner)               │
-│                                        │
-│       ELY_AI_COMPUTING                 │
-│  CALCULATING OEE · ANALYZING VECTORS  │
-│       · GENERATING PDF                 │
-│                                        │
-│  ████████████████░░░░░░░░ (progress)  │
-│                                        │
-└────────────────────────────────────────┘
-```
+![Profile Page](./KPIs%20System/img/Profile.png)
 
-_Overlay de chargement pendant que les 2 agents AI traitent les données, interrogent la VectorBase et génèrent le rapport PDF._
+_Page profil avec informations entreprise (nom, secteur, téléphone), statistiques globales de la société._
 
 ---
 
 ### 📄 Rapport PDF Généré
 
-Structure du rapport PDF produit automatiquement par AI Agent 2 :
+![PDF Report](./KPIs%20System/img/THE%20PDF%20RAPPORT.png)
 
-```
-┌────────────────────────────────────────────────────────┐
-│  ⚙️ ELY.Automation          Généré automatiquement    │
-│  RAPPORT DE PERFORMANCE INDUSTRIELLE — KPI OEE        │
-│  Date: 2025-01-15                                      │
-├────────────────────────────────────────────────────────┤
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐  │
-│  │ OEE      │ │ Dispo    │ │ Perf     │ │ Qualité  │  │
-│  │ 67.4%    │ │ 84.2%    │ │ 78.5%    │ │ 93.1%    │  │
-│  │ ⚠️ MOYEN │ │ ✅ BON   │ │ ⚠️ MOYEN │ │ ✅ BON   │  │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘  │
-├────────────────────────────────────────────────────────┤
-│  TABLEAU DÉTAILLÉ PAR MACHINE                          │
-│  Machine    OEE    État    Dispo   Perf   Qualité      │
-│  PRESSE-A1  72.3%  ✅ BON  84.2%  78.5%  93.1%        │
-│  CNC-02     48.1%  ❌ CRIT 75.0%  66.7%  91.4%        │
-├────────────────────────────────────────────────────────┤
-│  ANALYSE PAR MACHINE (jauges visuelles)                │
-│  🏭 PRESSE-A1                                          │
-│  OEE  ▓▓▓▓▓▓▓░░░ 72.3%                                │
-│  Dispo ▓▓▓▓▓▓▓▓░░ 84.2%                               │
-├────────────────────────────────────────────────────────┤
-│  Rapport généré par ELY.Automation — Agent KPI        │
-└────────────────────────────────────────────────────────┘
-```
+_Rapport PDF généré automatiquement par AI Agent 2 avec KPI cards, tableau détaillé par machine, et analyses visuelles._
+
+---
+
+### 🔄 Workflow d'Ajout n8n
+
+![Add Workflow](./KPIs%20System/img/add_workflow.jpg)
+
+_Configuration d'ajout de workflow dans n8n pour l'ingestion de données._
+
+---
+
+### 🔍 Workflow d'Analyse n8n
+
+![Analysis Workflow](./KPIs%20System/img/analyse_workflow.jpg)
+
+_Workflow d'analyse complet avec calcul des KPIs et génération du rapport via AI Agent._
 
 ---
 
