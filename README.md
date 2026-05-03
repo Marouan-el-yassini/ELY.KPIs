@@ -649,7 +649,7 @@ Pour chaque KPI calculé (OEE, Disponibilité, Performance, Qualité), l'agent :
 ## Author
 
 **ELY.Automation**
-💼 [LinkedIn](https://linkedin.com/in/marouan-el-yassini)  
+💼 [LinkedIn](https://www.linkedin.com/in/marouan-el-yassini-b88a43333/)  
 💻 [GitHub](https://github.com/Marouan-el-yassini)
 
 ---
